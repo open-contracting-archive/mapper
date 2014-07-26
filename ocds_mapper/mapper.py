@@ -62,7 +62,7 @@ def process(csv_path, mapping_path, publisher_name, publish_date):
                     publisher_name, publish_date, str(uuid.uuid4()))
             result['releases'].append(release)
 
-    return json.dumps(result)
+    return json.dumps(result, indent=4)
 
 
 def main():
