@@ -49,10 +49,10 @@ def main():
         '--mapping-file', metavar='mapping.json', type=str, required=True,
         help='the mapping used to convert the csv file')
     parser.add_argument(
-        '--publisher-name', type=str,
+        '--publisher-name', type=str, required=True,
         help='name of the organization that published the csv file')
     parser.add_argument(
-        '--publish-date', type=str,
+        '--publish-date', type=str, required=True,
         help='ISO date when the csv file was published')
 
     options = parser.parse_args()
