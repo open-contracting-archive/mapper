@@ -77,7 +77,7 @@ def main():
                     str(uuid.uuid4()))
             result['releases'].append(release)
 
-    print(json.dumps(result))
+    print(json.dumps(result, indent=4))
 
 
 if __name__ == '__main__':
