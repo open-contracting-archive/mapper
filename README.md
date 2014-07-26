@@ -9,6 +9,8 @@ To Do:
 - provide an option to autogenerate the releaseID
 - ~~provide ability to take multiple csvs (may have different headings) e.g. two tender csvs and one award csv~~
 - accept urls as well as files
+- package as lib
+- allow ocds format to be extended (extend the mapping)
 
 Next steps:
 - build a django app so that users can build their map graphically (nothing super fancy, just not command line)
