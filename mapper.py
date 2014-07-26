@@ -64,7 +64,7 @@ def main():
     release_schema = result['releases'][0]
     result['releases'] = []
     result['publisher']['name'] = options.publisher_name
-    result['publishingMeta']['date'] = options.publisher_name
+    result['publishingMeta']['date'] = options.publish_date
 
     with open_file_path_or_url(options.csv_file) as csv_file:
         reader = csv.DictReader(csv_file)
