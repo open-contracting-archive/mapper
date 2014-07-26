@@ -12,4 +12,7 @@ setup(
     description='Map csv files to open contracting data standard.',
     long_description=open('README.md').read(),
     install_requires=[],
+    extras_require={
+        'test': ['mock']
+    }
 )
