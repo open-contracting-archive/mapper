@@ -1,0 +1,34 @@
+{
+    "publisher": {
+        "name": "Buyandsell.gc.ca",
+        "scheme": "",
+        "uid": "",
+        "uri": ""
+    },
+    "publishingMeta": {
+        "date": "2014-07-26"
+    },
+    "releases": [
+        {
+        "releaseMeta": {
+            "ocid": "reference_number",
+            "releaseID": ""
+            "releaseTag": "tenderNotice",
+            "locale": "English"
+        },
+        "buyer": {
+            "id": {
+                "name": "end_user_entity",
+                "scheme": "",
+                "uid": "",
+                "uri": ""
+            }
+        },
+        "planning": {},
+        "formation": {},
+        "award": {},
+        "contract": {},
+        "performance": {}
+        }
+    ]
+}
