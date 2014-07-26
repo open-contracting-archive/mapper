@@ -42,19 +42,14 @@ def main():
 
     with open(options.mapping_file, 'rb') as mapping_file:
         content = mapping_file.read()
-        release_schema = json.loads(content)['releases'][0]
+        result = json.loads(content)
+
+    release_schema = result['releases'][0]
+    result['releases'] = []
+    result['publisher']['name'] = options.publisher_name
+    result['publishingMeta']['date'] = options.publisher_name
 
     with open(options.csv_file, 'rb') as csv_file:
-        result = {
-            'publisher': {
-                'name': options.publisher_name
-            },
-            'publishingMeta': {
-                'date': options.publish_date
-            },
-            'releases': []
-        }
-
         reader = csv.DictReader(csv_file)
         for row in reader:
             release = traverse(release_schema, values=row)
