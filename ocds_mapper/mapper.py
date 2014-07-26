@@ -25,7 +25,10 @@ def open_file_path_or_url(file_path_or_url):
 
 def traverse(schema, values):
     if isinstance(schema, (str, unicode)):
-        return values[schema]
+        if schema:
+            return values[schema]
+        else:
+            return schema
     elif isinstance(schema, dict):
         result = {}
         for key, value in schema.items():
@@ -38,6 +41,28 @@ def traverse(schema, values):
         return result
     else:
         copy.deepcopy(schema)
+
+
+def process(csv_path, mapping_path, publisher_name, publish_date):
+    with open_file_path_or_url(mapping_path) as mapping_file:
+        content = mapping_file.read()
+        result = json.loads(content)
+
+    release_schema = result['releases'][0]
+    result['releases'] = []
+    result['publisher']['name'] = publisher_name
+    result['publishingMeta']['date'] = publish_date
+
+    with open_file_path_or_url(csv_path) as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            release = traverse(release_schema, values=row)
+            if 'releaseID' not in release['releaseMeta']:
+                release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
+                    publisher_name, publish_date, str(uuid.uuid4()))
+            result['releases'].append(release)
+
+    return json.dumps(result, indent=4)
 
 
 def main():
@@ -58,26 +83,10 @@ def main():
 
     options = parser.parse_args()
 
-    with open_file_path_or_url(options.mapping_file) as mapping_file:
-        content = mapping_file.read()
-        result = json.loads(content)
-
-    release_schema = result['releases'][0]
-    result['releases'] = []
-    result['publisher']['name'] = options.publisher_name
-    result['publishingMeta']['date'] = options.publish_date
-
-    with open_file_path_or_url(options.csv_file) as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            release = traverse(release_schema, values=row)
-            if 'releaseID' not in release['releaseMeta']:
-                release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
-                    options.publisher_name, options.publish_date,
-                    str(uuid.uuid4()))
-            result['releases'].append(release)
-
-    print(json.dumps(result, indent=4))
+    result = process(
+        options.csv_file, options.mapping_file,
+        options.publisher_name, options.publish_date)
+    print(result)
 
 
 if __name__ == '__main__':
