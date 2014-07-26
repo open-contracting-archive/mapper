@@ -23,21 +23,28 @@ def open_file_path_or_url(file_path_or_url):
             yield f
 
 
-def traverse(schema, values):
+def decompose_schema(value, csv_row):
+    result = value.split(':')
+    if 'constant' in result:
+        return result[1]
+    return csv_row[value]
+
+
+def traverse(schema, csv_row):
     if isinstance(schema, (str, unicode)):
         if schema:
-            return values[schema]
+            return decompose_schema(schema, csv_row)
         else:
             return schema
     elif isinstance(schema, dict):
         result = {}
         for key, value in schema.items():
-            result[key] = traverse(value, values)
+            result[key] = traverse(value, csv_row)
         return result
     elif isinstance(schema, list):
         result = []
         for value in schema:
-            result.append(traverse(value, values))
+            result.append(traverse(value, csv_row))
         return result
     else:
         copy.deepcopy(schema)
@@ -56,7 +63,7 @@ def process(csv_path, mapping_path, publisher_name, publish_date):
     with open_file_path_or_url(csv_path) as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
-            release = traverse(release_schema, values=row)
+            release = traverse(release_schema, csv_row=row)
             if 'releaseID' not in release['releaseMeta']:
                 release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
                     publisher_name, publish_date, str(uuid.uuid4()))
