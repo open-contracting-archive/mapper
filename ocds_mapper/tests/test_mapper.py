@@ -25,13 +25,16 @@ def test_process_creates_compatible_json_using_input_data_and_mapping():
         "publishingMeta": {"date": "2014-07-26"},
         "releases": [
             {"releaseMeta": {
-                "locale": "English", "ocid": "PW-$KIN-650-6155",
+                "locale": "English",
+                "ocid": "PW-$KIN-650-6155",
                 "releaseID": "John Doe-2014-07-26-UUID"}},
             {"releaseMeta": {
-                "locale": "English", "ocid": "PW-$VIC-242-6289",
+                "locale": "English",
+                "ocid": "PW-$VIC-242-6289",
                 "releaseID": "John Doe-2014-07-26-UUID"}},
             {"releaseMeta": {
-                "locale": "English", "ocid": "PW-$$XL-122-26346",
+                "locale": "English",
+                "ocid": "PW-$$XL-122-26346",
                 "releaseID": "John Doe-2014-07-26-UUID"}}
         ]
     }
