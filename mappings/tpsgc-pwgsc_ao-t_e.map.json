@@ -1,0 +1,16 @@
+{
+    "publisher": {
+        "name": ""
+    },
+    "publishingMeta": {
+        "date": ""
+    },
+    "releases": [
+        {
+            "releaseMeta": {
+                "ocid": "reference_number",
+                "locale": "language"
+            }
+        }
+    ]
+}
