@@ -70,6 +70,10 @@ def main():
         reader = csv.DictReader(csv_file)
         for row in reader:
             release = traverse(release_schema, values=row)
+            if 'releaseID' not in release['releaseMeta']:
+                release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
+                    options.publisher_name, options.publish_date,
+                    str(uuid.uuid4()))
             result['releases'].append(release)
 
     print(json.dumps(result))
