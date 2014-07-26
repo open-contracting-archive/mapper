@@ -25,7 +25,10 @@ def open_file_path_or_url(file_path_or_url):
 
 def traverse(schema, values):
     if isinstance(schema, (str, unicode)):
-        return values[schema]
+        if schema:
+            return values[schema]
+        else:
+            return schema
     elif isinstance(schema, dict):
         result = {}
         for key, value in schema.items():
