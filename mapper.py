@@ -1,8 +1,25 @@
 import argparse
+import contextlib
+import copy
 import csv
 import json
+import urllib2
+import urlparse
 import uuid
-import copy
+
+
+def is_url(file_path_or_url):
+    return urlparse.urlparse(file_path_or_url).scheme != ''
+
+
+@contextlib.contextmanager
+def open_file_path_or_url(file_path_or_url):
+    if is_url(file_path_or_url):
+        with contextlib.closing(urllib2.urlopen(file_path_or_url)) as f:
+            yield f
+    else:
+        with open(file_path_or_url, 'rb') as f:
+            yield f
 
 
 def traverse(schema, values):
@@ -40,19 +57,23 @@ def main():
 
     options = parser.parse_args()
 
-    with open(options.mapping_file, 'rb') as mapping_file:
+    with open_file_path_or_url(options.mapping_file) as mapping_file:
         content = mapping_file.read()
         result = json.loads(content)
 
     release_schema = result['releases'][0]
     result['releases'] = []
     result['publisher']['name'] = options.publisher_name
-    result['publishingMeta']['date'] = options.publisher_name
+    result['publishingMeta']['date'] = options.publish_date
 
-    with open(options.csv_file, 'rb') as csv_file:
+    with open_file_path_or_url(options.csv_file) as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             release = traverse(release_schema, values=row)
+            if 'releaseID' not in release['releaseMeta']:
+                release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
+                    options.publisher_name, options.publish_date,
+                    str(uuid.uuid4()))
             result['releases'].append(release)
 
     print(json.dumps(result))

@@ -8,7 +8,7 @@ To Do:
 - ~~start with a command line / python function that takes a csv file, the schema, and a map (define as you wish) as input and outputs ocds json~~
 - provide an option to autogenerate the releaseID
 - ~~provide ability to take multiple csvs (may have different headings) e.g. two tender csvs and one award csv~~
-- accept urls as well as files
+- ~~accept urls as well as files~~
 - package as lib
 - allow ocds format to be extended (extend the mapping)
 
