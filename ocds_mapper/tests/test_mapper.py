@@ -82,3 +82,10 @@ def test_traverse_raises_error_indicating_wrong_header_for_invalid_keys():
     with pytest.raises(KeyError) as e:
         ocds_mapper.mapper.traverse(schema, csv_row)
     assert 'invalid' in e.value.message
+
+def test_traverse_raises_error_if_integer_conversion_failed():
+    schema = 'integer:num'
+    csv_row = {'num': 'foo'}
+    with pytest.raises(ValueError) as e:
+        ocds_mapper.mapper.traverse(schema, csv_row)
+    assert 'not an integer' in e.value.message

@@ -42,7 +42,12 @@ def decompose_schema(schema, csv_row):
     elif 'constant' == column_type:
         return value
     elif 'integer' == column_type:
-        return int(get_csv_data(csv_row, value))
+        try:
+            return int(get_csv_data(csv_row, value))
+        except ValueError:
+            raise ValueError(
+                '"{}" is not an integer. Maybe mapping "{}" is invalid.'
+                .format(get_csv_data(csv_row, value), schema))
     elif 'boolean' == column_type:
         return get_csv_data(csv_row, value).lower() in [
             '1', 't', 'true', 'yes']
