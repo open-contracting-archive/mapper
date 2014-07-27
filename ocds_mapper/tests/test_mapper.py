@@ -75,3 +75,10 @@ def test_traverse_raises_error_if_invalid_column_type_is_used():
     with pytest.raises(ValueError) as e:
         ocds_mapper.mapper.traverse(schema, csv_row)
     assert 'column' in e.value.message
+
+def test_traverse_raises_error_indicating_wrong_header_for_invalid_keys():
+    schema = 'foo'
+    csv_row = {}
+    with pytest.raises(KeyError) as e:
+        ocds_mapper.mapper.traverse(schema, csv_row)
+    assert 'invalid' in e.value.message

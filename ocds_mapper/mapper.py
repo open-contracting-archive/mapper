@@ -23,20 +23,29 @@ def open_file_path_or_url(file_path_or_url):
             yield f
 
 
+def get_csv_data(csv_row, key):
+    try:
+        return csv_row[key]
+    except KeyError as error:
+        raise KeyError(
+            'Mapping uses invalid CSV header "{}"'.format(error.message))
+
+
 def decompose_schema(schema, csv_row):
     result = schema.split(':', 1)  # split at most once, i.e. only first colon
     if len(result) == 1:
-        return csv_row[schema]
+        return get_csv_data(csv_row, schema)
 
     column_type, value = result
     if 'string' == column_type:
-        return csv_row[value]
+        return get_csv_data(csv_row, value)
     elif 'constant' == column_type:
         return value
     elif 'integer' == column_type:
-        return int(csv_row[value])
+        return int(get_csv_data(csv_row, value))
     elif 'boolean' == column_type:
-        return csv_row[value].lower() in ['1', 't', 'true', 'yes']
+        return get_csv_data(csv_row, value).lower() in [
+            '1', 't', 'true', 'yes']
 
     raise ValueError('Invalid column type "{}:" -- valid column types are: '
                      'string, constant, integer, boolean.'.format(column_type))
