@@ -55,6 +55,11 @@ def test_traverse_comprehends_integer_tag():
     csv_row = {'num': '12'}
     assert 12 == ocds_mapper.mapper.traverse(schema, csv_row)
 
+def test_traverse_comprehends_number_tag():
+    schema = 'number:num'
+    csv_row = {'num': '2.7'}
+    assert 2.7 == ocds_mapper.mapper.traverse(schema, csv_row)
+
 def test_traverse_comprehends_boolean_tag():
     for falsy in ['0', 'f', 'false', 'False', 'no', 'No']:
         assert False == ocds_mapper.mapper.traverse(
@@ -89,3 +94,10 @@ def test_traverse_raises_error_if_integer_conversion_failed():
     with pytest.raises(ValueError) as e:
         ocds_mapper.mapper.traverse(schema, csv_row)
     assert 'not an integer' in e.value.message
+
+def test_traverse_raises_error_if_float_conversion_failed():
+    schema = 'number:num'
+    csv_row = {'num': 'foo'}
+    with pytest.raises(ValueError) as e:
+        ocds_mapper.mapper.traverse(schema, csv_row)
+    assert 'not a float' in e.value.message
