@@ -85,12 +85,9 @@ def get_index_pattern(schema):
             return schema
         else:
             return None
-    elif isinstance(schema, dict):
-        for key, value in schema.items():
-            result = get_index_pattern(value)
-            if result is not None:
-                return result
-    elif isinstance(schema, list):
+    elif isinstance(schema, (dict, list)):
+        if isinstance(schema, dict):
+            schema = schema.values()
         for value in schema:
             result = get_index_pattern(value)
             if result is not None:
