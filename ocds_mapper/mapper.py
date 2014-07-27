@@ -147,10 +147,11 @@ def create_list_of_indexed_objects(indexed_key, csv_row, schema, list_value):
     i = get_start_index(indexed_key, csv_row)
 
     result = []
-    while csv_row_has_key(
-            indexed_key.replace('#', str(i)), csv_row):
+    while csv_row_has_key(indexed_key.replace('#', str(i)), csv_row):
         for value in schema:
-            result.append(traverse(value, csv_row, i, list_value))
+            result.append(
+                traverse(value, csv_row, i, list_value)
+            )
         i += 1
     return result
 
