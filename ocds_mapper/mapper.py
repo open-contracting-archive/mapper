@@ -126,7 +126,7 @@ def main():
     result = process(
         options.csv_file, options.mapping_file,
         options.publisher_name, options.publish_date)
-    print(result)
+    print(result.encode('utf-8'))
 
 
 if __name__ == '__main__':
