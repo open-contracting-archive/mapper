@@ -1,6 +1,7 @@
 import json
 import mock
 import ocds_mapper.mapper
+import pytest
 
 def test_is_url_returns_true_for_urls():
     assert (
@@ -67,3 +68,10 @@ def test_traverse_comprehends_constant_tag():
     schema = 'constant:en_us'
     csv_row = {}
     assert 'en_us' == ocds_mapper.mapper.traverse(schema, csv_row)
+
+def test_traverse_raises_error_if_invalid_column_type_is_used():
+    schema = 'foobarbaz:hello'
+    csv_row = {}
+    with pytest.raises(ValueError) as e:
+        ocds_mapper.mapper.traverse(schema, csv_row)
+    assert 'column' in e.value.message

@@ -38,7 +38,8 @@ def decompose_schema(schema, csv_row):
     elif 'boolean' == column_type:
         return csv_row[value].lower() in ['1', 't', 'true', 'yes']
 
-    raise
+    raise ValueError('Invalid column type "{}:" -- valid column types are: '
+                     'string, constant, integer, boolean.'.format(column_type))
 
 
 def traverse(schema, csv_row):
