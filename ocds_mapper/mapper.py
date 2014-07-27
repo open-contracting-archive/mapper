@@ -33,7 +33,7 @@ def get_csv_data(csv_row, key, index=None):
             'Mapping uses invalid CSV header "{}"'.format(error.message))
 
 
-def decompose_schema(schema, csv_row, index=None):
+def decompose_schema(schema, csv_row, index=None, list_value=None):
     result = schema.split(':', 1)  # split at most once, i.e. only first colon
     if len(result) == 1:
         return get_csv_data(csv_row, schema, index)
@@ -60,6 +60,12 @@ def decompose_schema(schema, csv_row, index=None):
     elif 'boolean' == column_type:
         return get_csv_data(csv_row, value, index).lower() in [
             '1', 't', 'true', 'yes']
+    elif 'list' == column_type:
+        if list_value is not None:
+            return list_value
+        return map(
+            lambda it: it.strip(),
+            get_csv_data(csv_row, value, index).split(','))
 
     raise ValueError('Invalid column type "{}:" -- valid column types are: '
                      'string, constant, integer, boolean.'.format(column_type))
@@ -93,16 +99,29 @@ def get_indexed_key(schema):
         return None
 
 
-def traverse(schema, csv_row, index=None):
+def get_list_key(schema):
+    if isinstance(schema, (str, unicode)):
+        if schema.startswith('list:'):
+            return schema
+    elif isinstance(schema, dict):
+        for key, value in schema.items():
+            result = get_list_key(value)
+            if result is not None:
+                return result
+    else:
+        return None
+
+
+def traverse(schema, csv_row, index=None, list_value=None):
     if isinstance(schema, (str, unicode)):
         if schema:
-            return decompose_schema(schema, csv_row, index)
+            return decompose_schema(schema, csv_row, index, list_value)
         else:
             return schema
     elif isinstance(schema, dict):
         result = {}
         for key, value in schema.items():
-            result[key] = traverse(value, csv_row, index)
+            result[key] = traverse(value, csv_row, index, list_value)
         return result
     elif isinstance(schema, list):
         indexed_key = get_indexed_key(schema)
@@ -125,14 +144,20 @@ def traverse(schema, csv_row, index=None):
             while csv_row_has_key(
                     indexed_key.replace('#', str(i)), csv_row):
                 for value in schema:
-                    result.append(traverse(value, csv_row, i))
+                    result.append(traverse(value, csv_row, i, list_value))
                 i += 1
             return result
-        else:
-            result = []
-            for value in schema:
-                result.append(traverse(value, csv_row, index))
-            return result
+
+        result = []
+        for value in schema:
+            list_key = get_list_key(value)
+            if list_key is not None:
+                list_values = decompose_schema(list_key, csv_row, index)
+                for list_value in list_values:
+                    result.append(traverse(value, csv_row, index, list_value))
+            else:
+                result.append(traverse(value, csv_row, index, list_value))
+        return result
     else:
         copy.deepcopy(schema)
 
