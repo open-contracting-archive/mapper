@@ -126,30 +126,39 @@ def traverse_dict(schema, csv_row, index, list_value):
     return result
 
 
+def create_list_of_indexed_objects(indexed_key, csv_row, schema, list_value):
+    i = 0
+    if not csv_row_has_key(indexed_key.replace('#', str(i)),
+                            csv_row):
+        # in case indexing starts at 1, foo_0_bar would fail
+        i = 1
+    if not csv_row_has_key(indexed_key.replace('#', str(i)),
+                            csv_row):
+        raise ValueError(
+            'Did not found columns for indexed key "{}", '
+            'i.e. neither "{}" nor "{}" was a valid column.'
+            .format(
+                indexed_key,
+                indexed_key.replace('#', '0'),
+                indexed_key.replace('#', '1')
+            )
+        )
+
+    result = []
+    while csv_row_has_key(
+            indexed_key.replace('#', str(i)), csv_row):
+        for value in schema:
+            result.append(traverse(value, csv_row, i, list_value))
+        i += 1
+    return result
+
+
 def traverse_list(schema, csv_row, index, list_value):
     indexed_key = get_indexed_key(schema)
     if indexed_key is not None:
-        i = 0
-        if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                                csv_row):
-            # in case indexing starts at 1, foo_0_bar would fail
-            i = 1
-        if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                                csv_row):
-            raise ValueError(
-                'Did not found columns for indexed key "{}", '
-                'i.e. neither "{}" nor "{}" was a valid column.'
-                .format(indexed_key,
-                        indexed_key.replace('#', '0'),
-                        indexed_key.replace('#', '1')))
-
-        result = []
-        while csv_row_has_key(
-                indexed_key.replace('#', str(i)), csv_row):
-            for value in schema:
-                result.append(traverse(value, csv_row, i, list_value))
-            i += 1
-        return result
+        return create_list_of_indexed_objects(
+            indexed_key, csv_row, schema, list_value
+        )
 
     result = []
     for value in schema:
