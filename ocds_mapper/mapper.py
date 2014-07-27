@@ -25,7 +25,7 @@ def open_file_path_or_url(file_path_or_url):
 
 def get_csv_data(csv_row, key):
     try:
-        return csv_row[key]
+        return csv_row[key].decode('utf-8')
     except KeyError as error:
         raise KeyError(
             'Mapping uses invalid CSV header "{}"'.format(error.message))
@@ -95,7 +95,7 @@ def process(csv_path, mapping_path, publisher_name, publish_date):
                     publisher_name, publish_date, str(uuid.uuid4()))
             result['releases'].append(release)
 
-    return json.dumps(result, indent=4)
+    return json.dumps(result, indent=4, ensure_ascii=False)
 
 
 def main():
