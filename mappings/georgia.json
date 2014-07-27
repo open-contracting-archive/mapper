@@ -45,7 +45,12 @@
                 "numberOfBidders": "num_bidders",
                 "numberOfBids": "num_bids",
                 "bidders": [
-                    ""
+                    {
+                        "name": "bidder_#_name",
+                        "scheme": "",
+                        "uid": "bidder_#_id",
+                        "uri": ""
+                    }
                 ],
                 "procuringEntity": {
                     "id": {
