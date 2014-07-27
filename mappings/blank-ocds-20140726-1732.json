@@ -3,34 +3,28 @@
         "name": "",
         "scheme": "",
         "uid": "",
-        "uri": "",
-        "": ""
+        "uri": ""
     },
     "publishingMeta": {
-        "date": "",
-        "": ""
+        "date": ""
     },
     "releases": [
         {
             "releaseMeta": {
                 "ocid": "",
                 "releaseID": "",
-                "releaseTag": "planning",
-                "locale": "",
-                "": ""
+                "releaseTag": "",
+                "locale": ""
             },
             "buyer": {
                 "id": {
                     "name": "",
                     "scheme": "",
                     "uid": "",
-                    "uri": "",
-                    "": ""
-                },
-                "": ""
+                    "uri": ""
+                }
             },
             "planning": {
-                "": ""
             },
             "formation": {
                 "notice": "",
@@ -38,11 +32,11 @@
                     ""
                 ],
                 "totalValue": "",
-                "method": "Open",
+                "method": "",
                 "methodJustification": "",
-                "selectionCriteria": "Lowest Cost",
+                "selectionCriteria": "",
                 "selectionDetails": "",
-                "submissionMethod": "Electronic Auction",
+                "submissionMethod": "",
                 "submissionDetails": "",
                 "tenderPeriod": "",
                 "clarificationPeriod": "",
@@ -58,27 +52,19 @@
                         "name": "",
                         "scheme": "",
                         "uid": "",
-                        "uri": "",
-                        "": ""
-                    },
-                    "": ""
+                        "uri": ""
+                    }
                 },
                 "attachments": [
                     ""
-                ],
-                "": ""
+                ]
             },
             "award": {
-                "": ""
             },
             "contract": {
-                "": ""
             },
             "performance": {
-                "": ""
-            },
-            "": ""
+            }
         }
-    ],
-    "": ""
+    ]
 }
