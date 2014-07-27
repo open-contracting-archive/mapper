@@ -23,11 +23,22 @@ def open_file_path_or_url(file_path_or_url):
             yield f
 
 
-def decompose_schema(value, csv_row):
-    result = value.split(':')
-    if 'constant' in result:
-        return result[1]
-    return csv_row[value]
+def decompose_schema(schema, csv_row):
+    result = schema.split(':', 1)  # split at most once, i.e. only first colon
+    if len(result) == 1:
+        return csv_row[schema]
+
+    column_type, value = result
+    if 'string' == column_type:
+        return csv_row[value]
+    elif 'constant' == column_type:
+        return value
+    elif 'integer' == column_type:
+        return int(csv_row[value])
+    elif 'boolean' == column_type:
+        return csv_row[value].lower() in ['1', 't', 'true', 'yes']
+
+    raise
 
 
 def traverse(schema, csv_row):

@@ -39,7 +39,31 @@ def test_process_creates_compatible_json_using_input_data_and_mapping():
         ]
     }
 
-def test_constant_tag():
+def test_traverse_uses_string_as_key():
+    schema = 'language'
+    csv_row = {'language': 'en_us'}
+    assert 'en_us' == ocds_mapper.mapper.traverse(schema, csv_row)
+
+def test_traverse_uses_string_tag_as_key():
+    schema = 'string:language'
+    csv_row = {'language': 'en_us'}
+    assert 'en_us' == ocds_mapper.mapper.traverse(schema, csv_row)
+
+def test_traverse_comprehends_integer_tag():
+    schema = 'integer:num'
+    csv_row = {'num': '12'}
+    assert 12 == ocds_mapper.mapper.traverse(schema, csv_row)
+
+def test_traverse_comprehends_boolean_tag():
+    for falsy in ['0', 'f', 'false', 'False', 'no', 'No']:
+        assert False == ocds_mapper.mapper.traverse(
+            'boolean:finished', {'finished': falsy})
+
+    for truly in ['1', 't', 'true', 'True', 'yes', 'Yes']:
+        assert True == ocds_mapper.mapper.traverse(
+            'boolean:finished', {'finished': truly})
+
+def test_traverse_comprehends_constant_tag():
     schema = 'constant:en_us'
-    values = {}
-    assert 'en_us' == ocds_mapper.mapper.traverse(schema, values)
+    csv_row = {}
+    assert 'en_us' == ocds_mapper.mapper.traverse(schema, csv_row)
