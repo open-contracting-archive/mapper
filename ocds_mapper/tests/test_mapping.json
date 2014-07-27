@@ -9,7 +9,7 @@
         {
             "releaseMeta": {
                 "ocid": "reference_number",
-                "locale": "language"
+                "locale": "constant:en_us"
             }
         }
     ]
