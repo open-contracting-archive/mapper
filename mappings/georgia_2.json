@@ -1,0 +1,111 @@
+{
+    "publisher": {
+        "name": "constant:Tender Monitor Georgia",
+        "scheme": "",
+        "uid": "",
+        "uri": ""
+    },
+    "publishingMeta": {
+        "date": "constant:2014-07-26"
+    },
+    "releases": [
+        {
+            "releaseMeta": {
+                "ocid": "tender_registration_number",
+                "releaseID": "id",
+                "releaseTag": "constant:awardNotice",
+                "locale": ""
+            },
+            "buyer": {
+                "id": {
+                    "name": "procurer_name",
+                    "scheme": "",
+                    "uid": "procurring_entity_id",
+                    "uri": ""
+                }
+            },
+            "planning": {},
+            "formation": {
+                "notice": {
+                    "id": "url_id",
+                    "uri": "http://tendermonitor.ge/en/tenders/",
+                    "publishedDate": "tender_announcement_date",
+                    "isAmendment": "",
+                    "amendment": {
+                        "amendmentDate": "",
+                        "amendedFields": "",
+                        "justification": ""
+                    }
+                },
+                "itemsToBeProcured": [
+                    {
+                        "description": "",
+                        "classificationScheme": "constant:CPV",
+                        "otherClassificationScheme": "",
+                        "classificationID": "cpv_code",
+                        "classificationDescription": "",
+                        "unitOfMeasure": "",
+                        "quantity": "",
+                        "valuePerUnit": {
+                            "amount": 0,
+                            "currency": ""
+                        }
+                    }
+                ],
+                "totalValue": {
+                    "amount": "integer:estimated_value",
+                    "currency": "constant:LARI"
+                },
+                "method": "Open",
+                "methodJustification": "",
+                "selectionCriteria": "Lowest Cost",
+                "selectionDetails": "",
+                "submissionMethod": "tender_type",
+                "submissionDetails": "",
+                "tenderPeriod": {
+                    "startDate": "bid_start_date",
+                    "endDate": "bid_end_date"
+                },
+                "clarificationPeriod": {
+                    "startDate": "",
+                    "endDate": ""
+                },
+                "clarifications": false,
+                "awardPeriod": {
+                    "startDate": "",
+                    "endDate": ""
+                },
+                "numberOfBidders": "integer:num_bidders",
+                "numberOfBids": "integer:num_bids",
+                "bidders": [
+                    {
+                        "id": {
+                            "name": "",
+                            "scheme": "",
+                            "uid": "",
+                            "uri": ""
+                        }
+                    }
+                ],
+                "procuringEntity": {
+                    "id": {
+                        "name": "",
+                        "scheme": "",
+                        "uid": "",
+                        "uri": ""
+                    }
+                },
+                "attachments": [
+                    {
+                        "description": "",
+                        "uri": "",
+                        "lastModified": ""
+                    }
+                ]
+            },
+            "award": {},
+            "contract": {},
+            "performance": {}
+        }
+    ]
+}
