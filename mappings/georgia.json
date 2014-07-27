@@ -3,10 +3,10 @@
         "name": "constant:Tender Monitor Georgia",
         "scheme": "",
         "uid": "",
-        "uri": "",
+        "uri": ""
     },
     "publishingMeta": {
-        "date": "constant:2014-07-26",
+        "date": "constant:2014-07-26"
     },
     "releases": [
         {
@@ -14,21 +14,17 @@
                 "ocid": "tender_registration_number",
                 "releaseID": "id",
                 "releaseTag": "constant:awardNotice",
-                "locale": "",
-                "": ""
+                "locale": ""
             },
             "buyer": {
                 "id": {
                     "name": "",
                     "scheme": "",
                     "uid": "procurring_entity_id",
-                    "uri": "",
-                    "": ""
-                },
-                "": ""
+                    "uri": ""
+                }
             },
             "planning": {
-                "": ""
             },
             "formation": {
                 "notice": "",
@@ -36,9 +32,9 @@
                     ""
                 ],
                 "totalValue": "",
-                "method": "Open",
+                "method": "",
                 "methodJustification": "",
-                "selectionCriteria": "Lowest Cost",
+                "selectionCriteria": "",
                 "selectionDetails": "",
                 "submissionMethod": "tender_type",
                 "submissionDetails": "",
@@ -56,27 +52,19 @@
                         "name": "",
                         "scheme": "",
                         "uid": "",
-                        "uri": "",
-                        "": ""
-                    },
-                    "": ""
+                        "uri": ""
+                    }
                 },
                 "attachments": [
                     ""
-                ],
-                "": ""
+                ]
             },
             "award": {
-                "": ""
             },
             "contract": {
-                "": ""
             },
             "performance": {
-                "": ""
-            },
-            "": ""
+            }
         }
-    ],
-    "": ""
+    ]
 }
