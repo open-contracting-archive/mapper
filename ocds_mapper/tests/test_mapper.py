@@ -129,3 +129,9 @@ def test_traverse_raises_error_if_float_conversion_failed():
     with pytest.raises(ValueError) as e:
         ocds_mapper.mapper.traverse(schema, csv_row)
     assert 'not a float' in e.value.message
+
+def test_traverse_process_list():
+    schema = [{"name": "constant:foo"}]
+    csv_row = {}
+    assert ocds_mapper.mapper.traverse(schema, csv_row) == [{"name": "foo"}]
+

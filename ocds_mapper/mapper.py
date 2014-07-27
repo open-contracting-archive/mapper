@@ -79,85 +79,107 @@ def csv_row_has_key(schema, csv_row):
     return True
 
 
-def get_indexed_key(schema):
+def get_index_pattern(schema):
     if isinstance(schema, (str, unicode)):
         if '#' in schema:
             return schema
         else:
             return None
-    elif isinstance(schema, dict):
-        for key, value in schema.items():
-            result = get_indexed_key(value)
-            if result is not None:
-                return result
-    elif isinstance(schema, list):
+    elif isinstance(schema, (dict, list)):
+        if isinstance(schema, dict):
+            schema = schema.values()
         for value in schema:
-            result = get_indexed_key(value)
+            result = get_index_pattern(value)
             if result is not None:
                 return result
     else:
         return None
 
 
-def get_list_key(schema):
+def get_list_tag(schema):
     if isinstance(schema, (str, unicode)):
         if schema.startswith('list:'):
             return schema
     elif isinstance(schema, dict):
         for key, value in schema.items():
-            result = get_list_key(value)
+            result = get_list_tag(value)
             if result is not None:
                 return result
     else:
         return None
 
 
+def traverse_str(schema, csv_row, index, list_value):
+    if schema:
+        return decompose_schema(schema, csv_row, index, list_value)
+    else:
+        return schema
+
+
+def traverse_dict(schema, csv_row, index, list_value):
+    result = {}
+    for key, value in schema.items():
+        result[key] = traverse(value, csv_row, index, list_value)
+    return result
+
+
+def get_start_index(index_pattern, csv_row):
+    if csv_row_has_key(index_pattern.replace('#', str(0)), csv_row):
+        return 0
+    if csv_row_has_key(index_pattern.replace('#', str(1)), csv_row):
+        return 1
+
+    raise ValueError(
+        'Did not found columns for indexed key "{}", '
+        'i.e. neither "{}" nor "{}" was a valid column.'
+        .format(
+            index_pattern,
+            index_pattern.replace('#', '0'),
+            index_pattern.replace('#', '1')
+        )
+    )
+
+
+def create_list_of_indexed_objects(index_pattern, csv_row, schema, list_value):
+    i = get_start_index(index_pattern, csv_row)
+
+    result = []
+    while csv_row_has_key(index_pattern.replace('#', str(i)), csv_row):
+        for value in schema:
+            result.append(
+                traverse(value, csv_row, i, list_value)
+            )
+        i += 1
+    return result
+
+
+def traverse_list(schema, csv_row, index, list_value):
+    # this happens eg when bidder_#_name is in subschema
+    index_pattern = get_index_pattern(schema)
+    if index_pattern is not None:
+        return create_list_of_indexed_objects(
+            index_pattern, csv_row, schema, list_value
+        )
+
+    result = []
+    for subschema in schema:
+        list_tag = get_list_tag(subschema)
+        if list_tag is not None:
+            list_values = decompose_schema(list_tag, csv_row, index)
+            for list_value in list_values:
+                result.append(traverse(subschema, csv_row, index, list_value))
+        else:
+            result.append(traverse(subschema, csv_row, index, list_value))
+    return result
+
+
 def traverse(schema, csv_row, index=None, list_value=None):
     if isinstance(schema, (str, unicode)):
-        if schema:
-            return decompose_schema(schema, csv_row, index, list_value)
-        else:
-            return schema
+        return traverse_str(schema, csv_row, index, list_value)
     elif isinstance(schema, dict):
-        result = {}
-        for key, value in schema.items():
-            result[key] = traverse(value, csv_row, index, list_value)
-        return result
+        return traverse_dict(schema, csv_row, index, list_value)
     elif isinstance(schema, list):
-        indexed_key = get_indexed_key(schema)
-        if indexed_key is not None:
-            i = 0
-            if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                                   csv_row):
-                # in case indexing starts at 1, foo_0_bar would fail
-                i = 1
-            if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                                   csv_row):
-                raise ValueError(
-                    'Did not found columns for indexed key "{}", '
-                    'i.e. neither "{}" nor "{}" was a valid column.'
-                    .format(indexed_key,
-                            indexed_key.replace('#', '0'),
-                            indexed_key.replace('#', '1')))
-
-            result = []
-            while csv_row_has_key(
-                    indexed_key.replace('#', str(i)), csv_row):
-                for value in schema:
-                    result.append(traverse(value, csv_row, i, list_value))
-                i += 1
-            return result
-
-        result = []
-        for value in schema:
-            list_key = get_list_key(value)
-            if list_key is not None:
-                list_values = decompose_schema(list_key, csv_row, index)
-                for list_value in list_values:
-                    result.append(traverse(value, csv_row, index, list_value))
-            else:
-                result.append(traverse(value, csv_row, index, list_value))
-        return result
+        return traverse_list(schema, csv_row, index, list_value)
     else:
         copy.deepcopy(schema)
 
