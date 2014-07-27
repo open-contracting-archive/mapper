@@ -79,7 +79,7 @@ def csv_row_has_key(schema, csv_row):
     return True
 
 
-def get_indexed_key(schema):
+def get_index_pattern(schema):
     if isinstance(schema, (str, unicode)):
         if '#' in schema:
             return schema
@@ -87,12 +87,12 @@ def get_indexed_key(schema):
             return None
     elif isinstance(schema, dict):
         for key, value in schema.items():
-            result = get_indexed_key(value)
+            result = get_index_pattern(value)
             if result is not None:
                 return result
     elif isinstance(schema, list):
         for value in schema:
-            result = get_indexed_key(value)
+            result = get_index_pattern(value)
             if result is not None:
                 return result
     else:
@@ -126,28 +126,28 @@ def traverse_dict(schema, csv_row, index, list_value):
     return result
 
 
-def get_start_index(indexed_key, csv_row):
-    if csv_row_has_key(indexed_key.replace('#', str(0)), csv_row):
+def get_start_index(index_pattern, csv_row):
+    if csv_row_has_key(index_pattern.replace('#', str(0)), csv_row):
         return 0
-    if csv_row_has_key(indexed_key.replace('#', str(1)), csv_row):
+    if csv_row_has_key(index_pattern.replace('#', str(1)), csv_row):
         return 1
 
     raise ValueError(
         'Did not found columns for indexed key "{}", '
         'i.e. neither "{}" nor "{}" was a valid column.'
         .format(
-            indexed_key,
-            indexed_key.replace('#', '0'),
-            indexed_key.replace('#', '1')
+            index_pattern,
+            index_pattern.replace('#', '0'),
+            index_pattern.replace('#', '1')
         )
     )
 
 
-def create_list_of_indexed_objects(indexed_key, csv_row, schema, list_value):
-    i = get_start_index(indexed_key, csv_row)
+def create_list_of_indexed_objects(index_pattern, csv_row, schema, list_value):
+    i = get_start_index(index_pattern, csv_row)
 
     result = []
-    while csv_row_has_key(indexed_key.replace('#', str(i)), csv_row):
+    while csv_row_has_key(index_pattern.replace('#', str(i)), csv_row):
         for value in schema:
             result.append(
                 traverse(value, csv_row, i, list_value)
@@ -157,12 +157,11 @@ def create_list_of_indexed_objects(indexed_key, csv_row, schema, list_value):
 
 
 def traverse_list(schema, csv_row, index, list_value):
-    indexed_key = get_indexed_key(schema)
-    if indexed_key is not None:
+    index_pattern = get_index_pattern(schema)
+    if index_pattern is not None:
         return create_list_of_indexed_objects(
-            indexed_key, csv_row, schema, list_value
+            index_pattern, csv_row, schema, list_value
         )
-
     result = []
     for value in schema:
         list_key = get_list_key(value)
