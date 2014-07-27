@@ -127,23 +127,20 @@ def traverse_dict(schema, csv_row, index, list_value):
 
 
 def get_start_index(indexed_key, csv_row):
-    i = 0
-    if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                            csv_row):
-        # in case indexing starts at 1, foo_0_bar would fail
-        i = 1
-    if not csv_row_has_key(indexed_key.replace('#', str(i)),
-                            csv_row):
-        raise ValueError(
-            'Did not found columns for indexed key "{}", '
-            'i.e. neither "{}" nor "{}" was a valid column.'
-            .format(
-                indexed_key,
-                indexed_key.replace('#', '0'),
-                indexed_key.replace('#', '1')
-            )
+    if csv_row_has_key(indexed_key.replace('#', str(0)), csv_row):
+        return 0
+    if csv_row_has_key(indexed_key.replace('#', str(1)), csv_row):
+        return 1
+
+    raise ValueError(
+        'Did not found columns for indexed key "{}", '
+        'i.e. neither "{}" nor "{}" was a valid column.'
+        .format(
+            indexed_key,
+            indexed_key.replace('#', '0'),
+            indexed_key.replace('#', '1')
         )
-    return i
+    )
 
 
 def create_list_of_indexed_objects(indexed_key, csv_row, schema, list_value):
