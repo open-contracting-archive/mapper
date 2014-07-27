@@ -90,6 +90,18 @@ def test_traverse_joins_multiple_fields_with_indexing_into_one_array():
         {'id': 1, 'name': 'One'}
     ]} == ocds_mapper.mapper.traverse(schema, csv_row)
 
+def test_traverse_splits_array_fields_and_creates_objects_based_on_subschema():
+    schema = {'attachments': [{
+        'uid': 'list:documents',
+        'name': 'constant:Attachment'
+    }]}
+    csv_row = {'documents': 'foo.pdf, bar.pdf ,baz.pdf'}
+    assert {'attachments': [
+        {'uid': 'foo.pdf', 'name': 'Attachment'},
+        {'uid': 'bar.pdf', 'name': 'Attachment'},
+        {'uid': 'baz.pdf', 'name': 'Attachment'}
+    ]} == ocds_mapper.mapper.traverse(schema, csv_row)
+
 def test_traverse_raises_error_if_invalid_column_type_is_used():
     schema = 'foobarbaz:hello'
     csv_row = {}

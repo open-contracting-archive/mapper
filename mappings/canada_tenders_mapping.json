@@ -25,7 +25,14 @@
             }
         },
         "planning": {},
-        "formation": {},
+        "formation": {
+            "attachments": [
+                {
+                    "name": "constant:Canada Tender",
+                    "uid": "list:document"
+                }
+            ]
+        },
         "award": {},
         "contract": {},
         "performance": {}
