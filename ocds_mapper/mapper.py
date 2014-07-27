@@ -99,13 +99,13 @@ def get_index_pattern(schema):
         return None
 
 
-def get_list_key(schema):
+def get_list_tag(schema):
     if isinstance(schema, (str, unicode)):
         if schema.startswith('list:'):
             return schema
     elif isinstance(schema, dict):
         for key, value in schema.items():
-            result = get_list_key(value)
+            result = get_list_tag(value)
             if result is not None:
                 return result
     else:
@@ -165,14 +165,14 @@ def traverse_list(schema, csv_row, index, list_value):
         )
 
     result = []
-    for value in schema:
-        list_key = get_list_key(value)
-        if list_key is not None:
-            list_values = decompose_schema(list_key, csv_row, index)
+    for subschema in schema:
+        list_tag = get_list_tag(subschema)
+        if list_tag is not None:
+            list_values = decompose_schema(list_tag, csv_row, index)
             for list_value in list_values:
-                result.append(traverse(value, csv_row, index, list_value))
+                result.append(traverse(subschema, csv_row, index, list_value))
         else:
-            result.append(traverse(value, csv_row, index, list_value))
+            result.append(traverse(subschema, csv_row, index, list_value))
     return result
 
 
