@@ -157,11 +157,13 @@ def create_list_of_indexed_objects(index_pattern, csv_row, schema, list_value):
 
 
 def traverse_list(schema, csv_row, index, list_value):
+    # this happens eg when bidder_#_name is in subschema
     index_pattern = get_index_pattern(schema)
     if index_pattern is not None:
         return create_list_of_indexed_objects(
             index_pattern, csv_row, schema, list_value
         )
+
     result = []
     for value in schema:
         list_key = get_list_key(value)
