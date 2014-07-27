@@ -23,7 +23,9 @@ def open_file_path_or_url(file_path_or_url):
             yield f
 
 
-def get_csv_data(csv_row, key):
+def get_csv_data(csv_row, key, index=None):
+    if index is not None:
+        key = key.replace('#', str(index))
     try:
         return csv_row[key].decode('utf-8')
     except KeyError as error:
@@ -31,54 +33,106 @@ def get_csv_data(csv_row, key):
             'Mapping uses invalid CSV header "{}"'.format(error.message))
 
 
-def decompose_schema(schema, csv_row):
+def decompose_schema(schema, csv_row, index=None):
     result = schema.split(':', 1)  # split at most once, i.e. only first colon
     if len(result) == 1:
-        return get_csv_data(csv_row, schema)
+        return get_csv_data(csv_row, schema, index)
 
     column_type, value = result
     if 'string' == column_type:
-        return get_csv_data(csv_row, value)
+        return get_csv_data(csv_row, value, index)
     elif 'constant' == column_type:
         return value
     elif 'integer' == column_type:
         try:
-            return int(get_csv_data(csv_row, value))
+            return int(get_csv_data(csv_row, value, index))
         except ValueError:
             raise ValueError(
                 '"{}" is not an integer. Maybe mapping "{}" is invalid.'
-                .format(get_csv_data(csv_row, value), schema))
+                .format(get_csv_data(csv_row, value, index), schema))
     elif 'number' == column_type:
         try:
-            return float(get_csv_data(csv_row, value))
+            return float(get_csv_data(csv_row, value, index))
         except ValueError:
             raise ValueError(
                 '"{}" is not a float. Maybe mapping "{}" is invalid.'
-                .format(get_csv_data(csv_row, value), schema))
+                .format(get_csv_data(csv_row, value, index), schema))
     elif 'boolean' == column_type:
-        return get_csv_data(csv_row, value).lower() in [
+        return get_csv_data(csv_row, value, index).lower() in [
             '1', 't', 'true', 'yes']
 
     raise ValueError('Invalid column type "{}:" -- valid column types are: '
                      'string, constant, integer, boolean.'.format(column_type))
 
 
-def traverse(schema, csv_row):
+def csv_row_has_key(schema, csv_row):
+    try:
+        decompose_schema(schema, csv_row)
+    except:
+        return False
+    return True
+
+
+def get_indexed_key(schema):
+    if isinstance(schema, (str, unicode)):
+        if '#' in schema:
+            return schema
+        else:
+            return None
+    elif isinstance(schema, dict):
+        for key, value in schema.items():
+            result = get_indexed_key(value)
+            if result is not None:
+                return result
+    elif isinstance(schema, list):
+        for value in schema:
+            result = get_indexed_key(value)
+            if result is not None:
+                return result
+    else:
+        return None
+
+
+def traverse(schema, csv_row, index=None):
     if isinstance(schema, (str, unicode)):
         if schema:
-            return decompose_schema(schema, csv_row)
+            return decompose_schema(schema, csv_row, index)
         else:
             return schema
     elif isinstance(schema, dict):
         result = {}
         for key, value in schema.items():
-            result[key] = traverse(value, csv_row)
+            result[key] = traverse(value, csv_row, index)
         return result
     elif isinstance(schema, list):
-        result = []
-        for value in schema:
-            result.append(traverse(value, csv_row))
-        return result
+        indexed_key = get_indexed_key(schema)
+        if indexed_key is not None:
+            i = 0
+            if not csv_row_has_key(indexed_key.replace('#', str(i)),
+                                   csv_row):
+                # in case indexing starts at 1, foo_0_bar would fail
+                i = 1
+            if not csv_row_has_key(indexed_key.replace('#', str(i)),
+                                   csv_row):
+                raise ValueError(
+                    'Did not found columns for indexed key "{}", '
+                    'i.e. neither "{}" nor "{}" was a valid column.'
+                    .format(indexed_key,
+                            indexed_key.replace('#', '0'),
+                            indexed_key.replace('#', '1')))
+
+            result = []
+            while csv_row_has_key(
+                    indexed_key.replace('#', str(i)), csv_row):
+                for value in schema:
+                    result.append(traverse(value, csv_row, i))
+                i += 1
+            return result
+        else:
+            result = []
+            for value in schema:
+                result.append(traverse(value, csv_row, index))
+            return result
     else:
         copy.deepcopy(schema)
 

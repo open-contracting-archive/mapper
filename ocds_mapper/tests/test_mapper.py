@@ -74,6 +74,22 @@ def test_traverse_comprehends_constant_tag():
     csv_row = {}
     assert 'en_us' == ocds_mapper.mapper.traverse(schema, csv_row)
 
+def test_traverse_joins_multiple_fields_with_indexing_into_one_array():
+    schema = {'bidder': [{
+        'id': 'integer:bidder_#_id',
+        'name': 'bidder_#_name'
+    }]}
+    csv_row = {
+        'bidder_0_id': '0',
+        'bidder_0_name': 'Zero',
+        'bidder_1_id': '1',
+        'bidder_1_name': 'One'
+    }
+    assert {'bidder': [
+        {'id': 0, 'name': 'Zero'},
+        {'id': 1, 'name': 'One'}
+    ]} == ocds_mapper.mapper.traverse(schema, csv_row)
+
 def test_traverse_raises_error_if_invalid_column_type_is_used():
     schema = 'foobarbaz:hello'
     csv_row = {}
