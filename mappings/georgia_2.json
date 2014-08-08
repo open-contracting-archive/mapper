@@ -28,7 +28,7 @@
             "formation": {
                 "notice": {
                     "id": "url_id",
-                    "uri": "http://tendermonitor.ge/en/tenders/",
+                    "uri": "constant:http://tendermonitor.ge/en/tenders/",
                     "publishedDate": "tender_announcement_date",
                     "isAmendment": "",
                     "amendment": {
@@ -47,18 +47,18 @@
                         "unitOfMeasure": "",
                         "quantity": "",
                         "valuePerUnit": {
-                            "amount": 0,
+                            "amount": "",
                             "currency": ""
                         }
                     }
                 ],
                 "totalValue": {
-                    "amount": "integer:estimated_value",
+                    "amount": "number:estimated_value",
                     "currency": "constant:LARI"
                 },
-                "method": "Open",
+                "method": "",
                 "methodJustification": "",
-                "selectionCriteria": "Lowest Cost",
+                "selectionCriteria": "",
                 "selectionDetails": "",
                 "submissionMethod": "tender_type",
                 "submissionDetails": "",
@@ -70,10 +70,10 @@
                     "startDate": "",
                     "endDate": ""
                 },
-                "clarifications": false,
+                "clarifications": "",
                 "awardPeriod": {
-                    "startDate": "",
-                    "endDate": ""
+                    "startDate": "bid_end_date",
+                    "endDate": "bid_end_date"
                 },
                 "numberOfBidders": "integer:num_bidders",
                 "numberOfBids": "integer:num_bids",
