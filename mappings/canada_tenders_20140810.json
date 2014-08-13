@@ -89,7 +89,7 @@
                 ],
                 "procuringEntity": {
                     "id": {
-                        "name": "",
+                        "name": "procurement_entity",
                         "scheme": "",
                         "uid": "",
                         "uri": ""
