@@ -3,10 +3,11 @@
         "name": "constant:Buyandsell.gc.ca",
         "scheme": "",
         "uid": "",
-        "uri": ""
+        "uri": "constant:https://buyandsell.gc.ca"
     },
     "publishingMeta": {
-        "date": "constant:2014-07-26"
+        "date": "constant:2014-07-26",
+        "license": "constant:http://data.gc.ca/eng/open-government-licence-canada"
     },
     "releases": [
         {
