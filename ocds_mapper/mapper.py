@@ -7,6 +7,7 @@ import json
 import urllib2
 import urlparse
 import uuid
+from datetime import date
 
 
 def is_url(file_path_or_url):
@@ -184,23 +185,23 @@ def traverse(schema, csv_row, index=None, list_value=None):
         copy.deepcopy(schema)
 
 
-def process(csv_path, mapping_path, publisher_name, publish_date):
+def process(csv_path, mapping_path):
     with open_file_path_or_url(mapping_path) as mapping_file:
         content = mapping_file.read()
         result = json.loads(content)
 
     release_schema = result['releases'][0]
     result['releases'] = []
-    result['publisher']['name'] = publisher_name
-    result['publishingMeta']['date'] = publish_date
 
     with open_file_path_or_url(csv_path) as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             release = traverse(release_schema, csv_row=row)
-            if 'releaseID' not in release['releaseMeta']:
-                release['releaseMeta']['releaseID'] = "{}-{}-{}".format(
-                    publisher_name, publish_date, str(uuid.uuid4()))
+            if 'releaseID' not in release:
+                release['releaseID'] = "{}-{}-{}".format(
+                    release.get('publisher', {}).get('name'),
+                    release.get('date', date.today().strftime("%Y%m%d")),
+                    str(uuid.uuid4()))
             result['releases'].append(release)
 
     return json.dumps(result, indent=4, ensure_ascii=False)
@@ -215,18 +216,11 @@ def main():
     parser.add_argument(
         '--mapping-file', metavar='mapping.json', type=str, required=True,
         help='the mapping used to convert the csv file')
-    parser.add_argument(
-        '--publisher-name', type=str, required=True,
-        help='name of the organization that published the csv file')
-    parser.add_argument(
-        '--publish-date', type=str, required=True,
-        help='ISO date when the csv file was published')
 
     options = parser.parse_args()
 
     result = process(
-        options.csv_file, options.mapping_file,
-        options.publisher_name, options.publish_date)
+        options.csv_file, options.mapping_file)
     print(result.encode('utf-8'))
 
 
