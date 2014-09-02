@@ -186,9 +186,8 @@ def traverse(schema, csv_row, index=None, list_value=None):
 
 
 def process(csv_path, mapping_path):
-    with open_file_path_or_url(mapping_path) as mapping_file:
-        content = mapping_file.read()
-        result = json.loads(content)
+    with open_file_path_or_url(mapping_path) as f:
+        result = json.loads(f.read())
 
     release_schema = result['releases'][0]
     result['releases'] = []
@@ -199,8 +198,8 @@ def process(csv_path, mapping_path):
             release = traverse(release_schema, csv_row=row)
             if 'releaseID' not in release:
                 release['releaseID'] = "{}-{}-{}".format(
-                    release.get('publisher', {}).get('name'),
-                    release.get('date', date.today().strftime("%Y%m%d")),
+                    result.get('publisher', {}).get('name'),
+                    result.get('date', date.today().strftime("%Y%m%d")),
                     str(uuid.uuid4()))
             result['releases'].append(release)
 
