@@ -15,3 +15,17 @@ To Do:
 Next steps:
 - build a django app so that users can build their map graphically (nothing super fancy, just not command line)
 - may put into validator app
+
+writing a map
+=============
+
+If you want to specify a constant value, use "constant:your constant here"
+
+For a field to be mapped as a number, use "number:number_field" (otherwise, it
+will be a string)
+
+For a field to be mapped as an integer, use "integer:integer_field" (otherwise, it
+will be a string)
+
+Boolean type specified as "boolean:boolean_field" any of the following will
+result in true being set: ['1', 't', 'true', 'yes']
