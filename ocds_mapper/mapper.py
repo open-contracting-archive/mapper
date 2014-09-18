@@ -69,7 +69,8 @@ def decompose_schema(schema, csv_row, index=None, list_value=None):
             return list_value
         return map(
             lambda it: it.strip(),
-            get_csv_data(csv_row, value, index).split(','))
+            str(get_csv_data(csv_row, value, index)).split(',')
+        )
 
     raise ValueError('Invalid column type "{}:" -- valid column types are: '
                      'string, constant, integer, boolean.'.format(column_type))
