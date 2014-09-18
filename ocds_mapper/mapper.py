@@ -42,38 +42,48 @@ def decompose_schema(schema, csv_row, index=None, list_value=None):
     if len(result) == 1:
         return get_csv_data(csv_row, schema, index)
 
-    column_type, value = result
-    if 'string' == column_type:
-        return get_csv_data(csv_row, value, index)
-    elif 'constant' == column_type:
+    mapping_type, mapping_value = result
+
+    # If we just want the constant from the mapping, just return that.
+    if mapping_type == 'constant':
+        return mapping_value
+
+    # Get the value from the csv
+    value = get_csv_data(csv_row, mapping_value, index)
+
+    # If it's None, return that.
+    if value is None:
         return value
-    elif 'integer' == column_type:
+
+    # If not, process into the correct format.
+    if mapping_type == 'string':
+        return str(value)
+
+    if mapping_type == 'integer':
         try:
-            return int(get_csv_data(csv_row, value, index))
+            return int(value)
         except ValueError:
-            raise ValueError(
-                '"{}" is not an integer. Maybe mapping "{}" is invalid.'
-                .format(get_csv_data(csv_row, value, index), schema))
-    elif 'number' == column_type:
+            raise ValueError('"{}" is not an integer. Maybe mapping "{}" is invalid.'.format(value, schema))  # nopep8
+
+    if mapping_type == 'number':
         try:
-            return float(get_csv_data(csv_row, value, index))
+            return float(value)
         except ValueError:
-            raise ValueError(
-                '"{}" is not a float. Maybe mapping "{}" is invalid.'
-                .format(get_csv_data(csv_row, value, index), schema))
-    elif 'boolean' == column_type:
-        return get_csv_data(csv_row, value, index).lower() in [
-            '1', 't', 'true', 'yes']
-    elif 'list' == column_type:
+            raise ValueError('"{}" is not a float. Maybe mapping "{}" is invalid.'.format(value, schema))  # nopep8
+
+    if mapping_type == 'boolean':
+        return value.lower() in ['1', 't', 'true', 'yes']
+
+    if mapping_type == 'list':
         if list_value is not None:
             return list_value
-        return map(
-            lambda it: it.strip(),
-            str(get_csv_data(csv_row, value, index)).split(',')
-        )
+        else:
+            return [x.strip() for x in value.split(',')]
 
-    raise ValueError('Invalid column type "{}:" -- valid column types are: '
-                     'string, constant, integer, boolean.'.format(column_type))
+    raise ValueError(
+        'Invalid column type "{}:" -- valid column types are: '
+        'string, constant, integer, boolean.'.format(mapping_type)
+    )
 
 
 def csv_row_has_key(schema, csv_row):
@@ -171,6 +181,8 @@ def traverse_list(schema, csv_row, index, list_value):
         list_tag = get_list_tag(subschema)
         if list_tag is not None:
             list_values = decompose_schema(list_tag, csv_row, index)
+            if list_values is None:
+                list_values = [None]
             for list_value in list_values:
                 result.append(traverse(subschema, csv_row, index, list_value))
         else:
@@ -203,7 +215,7 @@ def process(csv_path, mapping_path):
             if 'releaseID' not in release:
                 release['releaseID'] = "{}-{}-{}".format(
                     result.get('publisher', {}).get('name'),
-                    result.get('date', date.today().strftime("%Y%m%d")),
+                    result.get('publishedDate', date.today().strftime("%Y%m%d")),  # nopep8
                     str(uuid.uuid4()))
             result['releases'].append(release)
 
