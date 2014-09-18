@@ -2,7 +2,7 @@
     "publisher": {
         "name": "John Doe"
     },
-    "date": "2014-07-26",
+    "publishedDate": "2014-07-26",
     "releases": [
         {
             "ocid": "reference_number",

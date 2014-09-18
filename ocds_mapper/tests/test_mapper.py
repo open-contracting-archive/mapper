@@ -26,23 +26,25 @@ def test_process_creates_compatible_json_using_input_data_and_mapping():
             'ocds_mapper/tests/test_data.csv',
             'ocds_mapper/tests/test_mapping.json')
 
-    print result
     assert json.loads(result) == {
         "publisher": {"name": "John Doe"},
-        "date": "2014-07-26",
+        "publishedDate": "2014-07-26",
         "releases": [
             {
                 "locale": "en_us",
                 "ocid": "PW-$KIN-650-6155",
-                "releaseID": "John Doe-2014-07-26-UUID"},
+                "releaseID": "John Doe-2014-07-26-UUID"
+            },
             {
                 "locale": "en_us",
                 "ocid": "PW-$VIC-242-6289",
-                "releaseID": "John Doe-2014-07-26-UUID"},
+                "releaseID": "John Doe-2014-07-26-UUID"
+            },
             {
                 "locale": "en_us",
                 "ocid": "PW-$$XL-122-26346",
-                "releaseID": "John Doe-2014-07-26-UUID"}
+                "releaseID": "John Doe-2014-07-26-UUID"
+            }
         ]
     }
 
@@ -119,7 +121,7 @@ def test_traverse_splits_array_fields_and_creates_objects_based_on_subschema():
 
 def test_traverse_raises_error_if_invalid_column_type_is_used():
     schema = 'foobarbaz:hello'
-    csv_row = {}
+    csv_row = {'hello': 'testing'}
     with pytest.raises(ValueError) as e:
         ocds_mapper.mapper.traverse(schema, csv_row)
     assert 'column' in e.value.message
