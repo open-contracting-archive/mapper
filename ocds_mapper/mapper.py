@@ -28,10 +28,13 @@ def get_csv_data(csv_row, key, index=None):
     if index is not None:
         key = key.replace('#', str(index))
     try:
-        return csv_row[key].decode('utf-8')
+        value = csv_row[key].decode('utf-8')
+        if value == u'':
+            value = None
     except KeyError as error:
         raise KeyError(
             'Mapping uses invalid CSV header "{}"'.format(error.message))
+    return value
 
 
 def decompose_schema(schema, csv_row, index=None, list_value=None):
