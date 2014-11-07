@@ -33,17 +33,17 @@ def test_process_creates_compatible_json_using_input_data_and_mapping():
             {
                 "locale": "en_us",
                 "ocid": "PW-$KIN-650-6155",
-                "releaseID": "John Doe-2014-07-26-UUID"
+                "id": "John Doe-2014-07-26-UUID"
             },
             {
                 "locale": "en_us",
                 "ocid": "PW-$VIC-242-6289",
-                "releaseID": "John Doe-2014-07-26-UUID"
+                "id": "John Doe-2014-07-26-UUID"
             },
             {
                 "locale": "en_us",
                 "ocid": "PW-$$XL-122-26346",
-                "releaseID": "John Doe-2014-07-26-UUID"
+                "id": "John Doe-2014-07-26-UUID"
             }
         ]
     }

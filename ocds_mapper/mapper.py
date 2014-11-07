@@ -212,8 +212,8 @@ def process(csv_path, mapping_path):
         reader = csv.DictReader(csv_file)
         for row in reader:
             release = traverse(release_schema, csv_row=row)
-            if 'releaseID' not in release:
-                release['releaseID'] = "{}-{}-{}".format(
+            if 'id' not in release:
+                release['id'] = "{}-{}-{}".format(
                     result.get('publisher', {}).get('name'),
                     result.get('publishedDate', date.today().strftime("%Y%m%d")),  # nopep8
                     str(uuid.uuid4()))
